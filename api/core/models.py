@@ -38,10 +38,10 @@ class BrandPartner(models.Model):
 class Writer(models.Model):
     path = models.CharField('Путь', max_length=128, unique=True)
     firstname = models.CharField('Имя', max_length=128)
-    lastname = models.CharField('Фамилия', max_length=128)
-    pastname = models.CharField('Отчество', max_length=128)
+    lastname = models.CharField('Фамилия', max_length=128, null=True, blank=True)
+    pastname = models.CharField('Отчество', max_length=128, null=True, blank=True)
     description = RichTextUploadingField(verbose_name='Описание')
-    avatar_image = models.ImageField("Аватар", upload_to='writer/avatar/')
+    avatar_image = models.ImageField("Аватар", upload_to='writer/avatar/', null=True, blank=True)
     number_articles = models.IntegerField("Количество статей", default=0)
 
     class Meta:
