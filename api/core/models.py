@@ -58,8 +58,8 @@ class Tag(models.Model):
     description = RichTextUploadingField(verbose_name='Описание')
 
     class Meta:
-        verbose_name = "Тэг"
-        verbose_name_plural = "Тэги"
+        verbose_name = "Тег"
+        verbose_name_plural = "Теги"
 
     def __str__(self):
         return self.title
@@ -72,14 +72,15 @@ class Article(models.Model):
     title = models.CharField('Название', max_length=128, unique=True)
     description = RichTextUploadingField(verbose_name='Описание')
     preview_image = models.ImageField("Обложка", upload_to='article/preview/', blank=True, null=True)
-    date_creation = models.DateField('Дата создания', default=datetime.date.today)
+    time_at = models.TimeField('Время создания', default=datetime.datetime.now())
+    date_at = models.DateField('Дата создания', default=datetime.date.today)
     content = RichTextUploadingField(verbose_name='Контент')
-    tags = models.ManyToManyField(Tag, verbose_name="Тэги", related_name="tags")
+    tags = models.ManyToManyField(Tag, verbose_name="Теги", related_name="tags")
 
     class Meta:
         verbose_name = "Статья"
         verbose_name_plural = "Статьи"
 
     def __str__(self):
-        return f"[{self.date_creation}] -> {self.title}"
+        return f"[{self.date_at}] -> {self.title}"
 
