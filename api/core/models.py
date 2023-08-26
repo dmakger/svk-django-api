@@ -4,7 +4,6 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 
 
-# Create your models here.
 class BrandSupport(models.Model):
     path = models.CharField('Путь', max_length=128, unique=True)
     title = models.CharField('Название', max_length=128, unique=True)
@@ -84,4 +83,3 @@ class Article(models.Model):
 
     def __str__(self):
         return f"[{self.date_at}] -> {self.title}"
-

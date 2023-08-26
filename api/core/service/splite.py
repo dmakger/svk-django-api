@@ -58,7 +58,6 @@ class Splitting:
             if not many:
                 qs = qs[0]
             args = [*args, qs]
-        print(args, kwargs)
         self.serializer = self.self_parent.serializer_class(*args, **kwargs)
         self.data = self.serializer.data
 
