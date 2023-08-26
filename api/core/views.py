@@ -2,14 +2,31 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import BrandPartner, Article
-from .serializers import BrandPartnerSerializer, BrandPartnerDetailSerializer, ArticleSerializer
-from .service.error.error_view import BrandPartnerError
+from .models import BrandPartner, Article, BrandSupport
+from .serializers import BrandPartnerSerializer, BrandPartnerDetailSerializer, ArticleSerializer, \
+    ArticleDetailSerializer, BrandSupportSerializer
+from .service.error.error_view import BrandPartnerError, ArticleError
 from .service.order import Order
 from .service.paginator import Pagination
 # from .service.params import params
 from .service.splite import Splitting
-from .service.validator import Validator
+
+
+# ===========
+# Поддержка бренда
+# ===========
+class BrandSupportView(viewsets.ModelViewSet):
+    serializer_class = BrandSupportSerializer
+    queryset = BrandSupport.objects.all()
+    permission_classes = [permissions.AllowAny]
+
+    @action(methods=['get'], detail=False)
+    def get_brands(self, request):
+        qs = Order.by(self.queryset, request)
+        result = Pagination(request=request, queryset=qs).get()
+        serializer = self.serializer_class(result.get('results'), many=True)
+        result['results'] = serializer.data
+        return Response(result, status=status.HTTP_200_OK)
 
 
 # ===========
@@ -21,7 +38,7 @@ class BrandPartnerView(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
 
     @action(methods=['get'], detail=False)
-    def get_brand_partners(self, request):
+    def get_brands(self, request):
         qs = Order.by(self.queryset, request)
         result = Pagination(request=request, queryset=qs).get()
         serializer = self.serializer_class(result.get('results'), many=True)
@@ -50,7 +67,7 @@ class ArticleView(viewsets.ModelViewSet):
     serializer_class = ArticleSerializer
     queryset = Article.objects.all()
     permission_classes = [permissions.AllowAny]
-    error_adapter = BrandPartnerError()
+    error_adapter = ArticleError()
 
     @action(methods=['get'], detail=False)
     def get_articles(self, request, **kwargs):
@@ -59,9 +76,16 @@ class ArticleView(viewsets.ModelViewSet):
             self, request=request, qs=qs, serializer_body={'many': True}
         ).complete()
 
+
+class ArticleDetailView(viewsets.ModelViewSet):
+    serializer_class = ArticleDetailSerializer
+    queryset = Article.objects.all()
+    permission_classes = [permissions.AllowAny]
+    error_adapter = ArticleError()
+
     @action(methods=['get'], detail=True)
     def get_detail_article(self, request, path, **kwargs):
         qs = self.queryset.filter(path=path)
         return Splitting(
-            self, request=request, qs=qs, serializer_body={'instance': qs[0]}
-        ).complete(check_order=False, check_paginate=False)
+            self, request=request, qs=qs
+        ).complete(check_order=False, check_paginate=False, my_qs=True, many=False)

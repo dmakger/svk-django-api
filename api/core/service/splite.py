@@ -49,29 +49,36 @@ class Splitting:
         self.data = self.pagination.get()
         self.data['results'] = self.serializer.data
 
-    def serialize(self, my_qs=False, *args, **kwargs):
+    def serialize(self, my_qs=False, many=True, *args, **kwargs):
         kwargs = {**kwargs, **self.serializer_body}
         # if kwargs.get('instance') is None:
         #     kwargs['instance'] = self.qs
         if my_qs:
-            args = [*args, self.qs]
+            qs = self.qs
+            if not many:
+                qs = qs[0]
+            args = [*args, qs]
+        print(args, kwargs)
         self.serializer = self.self_parent.serializer_class(*args, **kwargs)
         self.data = self.serializer.data
 
-    def complete(self, check_validate=True, check_order=True, check_paginate=True, check_serialize=True):
+    def complete(self, my_qs=False, many=True, check_validate=True, check_order=True, check_paginate=True, check_serialize=True):
         if check_validate:
             self.validate()
             if self.error:
                 return self.response
+
         if check_order:
             self.order_by()
+
         if check_paginate:
             self.set_paginate()
             if check_serialize:
                 self.serialize(self.pagination.page_obj)
             self.paginate()
+
         if check_serialize and not check_paginate:
-            self.serialize()
+            self.serialize(my_qs, many)
 
         return Response(self.data, status=status.HTTP_200_OK)
 

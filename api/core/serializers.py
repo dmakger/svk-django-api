@@ -1,6 +1,15 @@
 from rest_framework import serializers
 
-from .models import BrandPartner, Article, Tag, Writer
+from .models import BrandPartner, Article, Tag, Writer, BrandSupport
+
+
+# ===========
+# Партнёры бренда
+# ===========
+class BrandSupportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BrandSupport
+        fields = "__all__"
 
 
 # ===========
@@ -33,7 +42,7 @@ class TagSerializer(serializers.ModelSerializer):
 class WriterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Writer
-        fields = ("avatar_image", "lastname", "firstname", "pastname", )
+        fields = ("avatar_image", "lastname", "firstname", "pastname", "rank")
 
 
 # ===========
@@ -48,9 +57,10 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 
 class ArticleDetailSerializer(serializers.ModelSerializer):
+    brand = BrandPartnerSerializer()
     tags = TagSerializer(many=True)
+    writer = WriterSerializer()
 
     class Meta:
         model = Article
-        fields = ("path", "title", "description", "preview_image", "time_at", "date_at", "tags")
-
+        fields = ("path", "title", "writer", "brand", "description", "preview_image", "date_at", "content", "tags")
