@@ -15,4 +15,5 @@ urlpatterns = [
 
     # Статьи партнёра
     path("brand_partners/<slug:path>/article/", ArticleView.as_view({'get': 'get_articles'})),
+    path("article/<slug:path>/", ArticleView.as_view({'get': 'get_detail_article'})),
 ]

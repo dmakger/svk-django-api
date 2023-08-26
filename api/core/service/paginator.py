@@ -11,13 +11,14 @@ class PaginationValue:
 class Pagination:
     """Пагинация моделей"""
 
-    def __init__(self, request, queryset, limit=None):
+    def __init__(self, request, queryset, data=None, limit=None):
         limit = self._get_limit(request, limit)
         self.paginator = Paginator(queryset, limit)
         self.request = request
         self.link = request.build_absolute_uri()
         self.current_page_num = self.get_current_page_num()
         self.page_obj = self.get_page()
+        self.data = data
 
     @staticmethod
     def _get_limit(request=None, limit=None):
@@ -40,7 +41,6 @@ class Pagination:
             "current_page": self.current_page_num,
             "results": self.page_obj
         }
-
 
     def get_current_page_num(self):
         """Вернет текущий номер пагинации"""

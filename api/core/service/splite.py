@@ -11,6 +11,8 @@ class Splitting:
         self.self_parent = self_parent
         self.request = request
         self.qs = qs
+        if serializer_body is None:
+            serializer_body = {}
         self.serializer_body = serializer_body
 
         self.pagination = None
@@ -18,7 +20,6 @@ class Splitting:
         self.data = None
         self.response = None
         self.error = None
-
 
     def set(self, self_parent=None, request=None, qs=None):
         if self_parent is not None:
@@ -54,7 +55,6 @@ class Splitting:
         #     kwargs['instance'] = self.qs
         if my_qs:
             args = [*args, self.qs]
-        print(args, kwargs)
         self.serializer = self.self_parent.serializer_class(*args, **kwargs)
         self.data = self.serializer.data
 

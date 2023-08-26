@@ -26,7 +26,7 @@ class BrandPartnerView(viewsets.ModelViewSet):
         result = Pagination(request=request, queryset=qs).get()
         serializer = self.serializer_class(result.get('results'), many=True)
         result['results'] = serializer.data
-        return Response(result, status=status.HTTP_200_OK, )
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class BrandPartnerDetailView(viewsets.ModelViewSet):
@@ -38,13 +38,9 @@ class BrandPartnerDetailView(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True)
     def get_detail_brand_partner(self, request, path):
         qs = self.queryset.filter(path=path)
-        validator = Validator(qs, self.error_adapter)
-        validator.full()
-        if validator.has_error:
-            return validator.error
-
-        result = self.serializer_class(qs[0]).data
-        return Response(result, status=status.HTTP_200_OK)
+        return Splitting(
+            self, request=request, qs=qs, serializer_body={'instance': qs[0]}
+        ).complete(check_order=False, check_paginate=False)
 
 
 # ===========
@@ -59,13 +55,13 @@ class ArticleView(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False)
     def get_articles(self, request, **kwargs):
         qs = self.queryset.filter(brand__path=kwargs.get('path'))
-        validator = Validator(qs, self.error_adapter)
-        validator.full()
-        if validator.has_error:
-            return validator.error
-        qs = Order.by(qs, request)
-        result = Pagination(request=request, queryset=qs).get()
-        serializer = self.serializer_class(instance=result.get('results'), many=True)
-        result['results'] = serializer.data
-        return Response(result, status=status.HTTP_200_OK)
-    # return Splitting(self, request=request, qs=qs, serializer_body={'many': True}).complete()
+        return Splitting(
+            self, request=request, qs=qs, serializer_body={'many': True}
+        ).complete()
+
+    @action(methods=['get'], detail=True)
+    def get_detail_article(self, request, path, **kwargs):
+        qs = self.queryset.filter(path=path)
+        return Splitting(
+            self, request=request, qs=qs, serializer_body={'instance': qs[0]}
+        ).complete(check_order=False, check_paginate=False)
