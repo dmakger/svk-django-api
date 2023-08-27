@@ -5,10 +5,10 @@ from rest_framework.response import Response
 from .models import BrandPartner, Article, BrandSupport
 from .serializers import BrandPartnerSerializer, BrandPartnerDetailSerializer, ArticleSerializer, \
     ArticleDetailSerializer, BrandSupportSerializer
-from .service.error.error_view import BrandPartnerError, ArticleError
+from .service.error.error_view import ArticleError, BrandPartnerError
+
 from .service.order import Order
 from .service.paginator import Pagination
-# from .service.params import params
 from .service.splite import Splitting
 
 
@@ -36,6 +36,7 @@ class BrandPartnerView(viewsets.ModelViewSet):
     serializer_class = BrandPartnerSerializer
     queryset = BrandPartner.objects.all()
     permission_classes = [permissions.AllowAny]
+    error_adapter = BrandPartnerError()
 
     @action(methods=['get'], detail=False)
     def get_brands(self, request):

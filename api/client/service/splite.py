@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 from .order import Order
 from .paginator import Pagination
-from .validator.validator import Validator
+from .validator import Validator
 
 
 class Splitting:
@@ -61,8 +61,7 @@ class Splitting:
         self.serializer = self.self_parent.serializer_class(*args, **kwargs)
         self.data = self.serializer.data
 
-    def complete(self, my_qs=False, many=True, check_validate=True, check_order=True, check_paginate=True,
-                 check_serialize=True):
+    def complete(self, my_qs=False, many=True, check_validate=True, check_order=True, check_paginate=True, check_serialize=True):
         if check_validate:
             self.validate()
             if self.error:
@@ -81,3 +80,4 @@ class Splitting:
             self.serialize(my_qs, many)
 
         return Response(self.data, status=status.HTTP_200_OK)
+
