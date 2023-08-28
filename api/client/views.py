@@ -3,12 +3,15 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import Client, SocialNetwork
-from .serializers import ClientSerializer
-from .service.error.error_view import ClientError
+from .models import Client, SocialNetwork, BusinessRequest, ServicesPackagePrice
+from .serializers import ClientSerializer, BusinessRequestSerializer
+from .service.error.error_view import ClientError, BusinessRequestError
 from .service.validator.validator import Validator
 
 
+# ===========
+# Клиент
+# ===========
 class ClientView(viewsets.ModelViewSet):
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
@@ -43,3 +46,46 @@ class ClientView(viewsets.ModelViewSet):
             current_client.save()
         result = self.serializer_class(current_client).data
         return Response(result, status=status.HTTP_200_OK)
+
+
+# ===========
+# Бизнес запрос
+# ===========
+class BusinessRequestView(viewsets.ModelViewSet):
+    serializer_class = BusinessRequestSerializer
+    queryset = BusinessRequest.objects.all()
+    permission_classes = [permissions.AllowAny]
+    error_adapter = BusinessRequestError()
+
+    @action(detail=False, methods=['post'])
+    def create_business_request(self, request):
+        validator = Validator(request=request, error_adapter=self.error_adapter)
+        validator.is_not_content(need_data=['title', 'description', 'client_id', 'services_package'])
+        if validator.has_error:
+            return validator.error
+
+        clients_id_list = Client.objects.filter(id=request.data['client_id'])
+        services_package_list = ServicesPackagePrice.objects.filter(id__in=request.data['services_package'])
+        if len(clients_id_list) == 0:
+            return self.error_adapter.is_not_found_curr(['client_id'])
+        if len(services_package_list) != len(request.data['services_package']):
+            return self.error_adapter.is_not_found_curr([f'services_package'])
+        business_request_list = self.queryset.filter(client=clients_id_list[0], title=request.data['title'])
+        if len(business_request_list) > 0:
+            current_business_request = business_request_list[0]
+            package_all = current_business_request.services_package_price.all()
+            for services_package in services_package_list:
+                if services_package not in package_all:
+                    current_business_request.services_package_price.add(services_package)
+            current_business_request.save()
+        else:
+            current_business_request = BusinessRequest.objects.create(
+                title=request.data['title'],
+                description=request.data['description'],
+                client=clients_id_list[0],
+            )
+            current_business_request.services_package_price.set(services_package_list)
+            current_business_request.save()
+        result = self.serializer_class(current_business_request).data
+        return Response(result, status=status.HTTP_200_OK)
+
