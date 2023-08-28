@@ -17,19 +17,6 @@ class Menu(models.Model):
         return self.title
 
 
-class SubMenu(models.Model):
-    menu = models.ForeignKey(to=Menu, on_delete=models.CASCADE, verbose_name='Меню')
-    path = models.CharField('Путь', max_length=64, unique=True)
-    title = models.CharField('Название', max_length=128, unique=True)
-
-    class Meta:
-        verbose_name = "Подменю"
-        verbose_name_plural = "Подменю"
-
-    def __str__(self):
-        return f"[{self.menu.title}] {self.title}"
-
-
 class File(models.Model):
     link = models.CharField('Ссылка на файл', max_length=64, unique=True)
     file = models.FilePathField('Файл', path='docs/')
@@ -44,15 +31,16 @@ class File(models.Model):
 
 
 class Page(models.Model):
-    submenu = models.ForeignKey(to=SubMenu, on_delete=models.CASCADE, verbose_name='Подменю')
+    menu = models.ForeignKey(to=Menu, on_delete=models.CASCADE, verbose_name='Меню')
     path = models.CharField('Путь', max_length=64, unique=True)
     title = models.CharField('Название', max_length=128, unique=True)
+    description = RichTextUploadingField(verbose_name='Описание', blank=True, default='')
     content = RichTextUploadingField(verbose_name='Содержимое', blank=True, default='')
-    files = models.ManyToManyField(File, verbose_name="Файлы", related_name="files")
+    files = models.ManyToManyField(File, verbose_name="Файлы", related_name="files", default='', blank=True)
 
     class Meta:
         verbose_name = "Страница"
         verbose_name_plural = "Страницы"
 
     def __str__(self):
-        return f"{self.title} [{self.submenu.menu} {self.submenu}]"
+        return f"{self.title} [{self.menu}]"
