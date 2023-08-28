@@ -1,9 +1,15 @@
 from django.contrib import admin
 
-# Register your models here.
-from .models import Client, SocialNetwork, ServicesPackage, BusinessRequest
+from .models import Client, SocialNetwork, BusinessRequest, ServicesPackage, Period, ServicesPackagePrice
 
+# Клиенты
 admin.site.register(SocialNetwork)
 admin.site.register(Client)
+
+# Пакеты услуг
 admin.site.register(ServicesPackage)
+admin.site.register(Period)
+admin.site.register(ServicesPackagePrice)
+
+# Запрос клиента
 admin.site.register(BusinessRequest)
