@@ -4,12 +4,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .models import Client, SocialNetwork
+from .serializers import ClientSerializer
 from .service.error.error_view import ClientError
 from .service.validator.validator import Validator
 
 
 class ClientView(viewsets.ModelViewSet):
-    # serializer_class = BrandPartnerSerializer
+    serializer_class = ClientSerializer
     queryset = Client.objects.all()
     permission_classes = [permissions.AllowAny]
     error_adapter = ClientError()
@@ -28,15 +29,17 @@ class ClientView(viewsets.ModelViewSet):
         elif len(clients_number_phone) > 0:
             current_client = clients_number_phone[0]
         else:
-            social = SocialNetwork.objects.create()
-            current_client = Client.objects.create(*request.data)
-        #
-        # auth = Profile.objects.get(user=self.request.user)
-        # course = Course.objects.create(title=course_title, profile=auth)
-        # course.save()
-        # ProfileCourse.objects.create(course=course, profile=auth).save()
-        return Response({
-            # 'title': course.title,
-            # 'path': course.path,
-            'message': "Курс успешно создан",
-        }, status=status.HTTP_200_OK)
+            social_list = SocialNetwork.objects.filter(link=request.data.get('communication'))
+            if len(social_list) > 0:
+                social = social_list
+            else:
+                social = SocialNetwork.objects.create(link=request.data.get('communication'))
+            current_client = Client.objects.create(
+                username=request.data['username'],
+                number_phone=request.data['number_phone'],
+                email=request.data['email'],
+            )
+            current_client.communication.set(social),
+            current_client.save()
+        result = self.serializer_class(current_client).data
+        return Response(result, status=status.HTTP_200_OK)
