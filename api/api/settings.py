@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 
     'core',
     'client',
+    'docs',
 
     'rest_framework',
     'corsheaders',
