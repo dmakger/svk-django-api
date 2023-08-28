@@ -3,8 +3,8 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import Client, SocialNetwork, BusinessRequest, ServicesPackagePrice
-from .serializers import ClientSerializer, BusinessRequestSerializer
+from .models import Client, SocialNetwork, BusinessRequest, ServicesPackagePrice, ServicesPackage
+from .serializers import ClientSerializer, BusinessRequestSerializer, ServicesPackageSerializer
 from .service.error.error_view import ClientError, BusinessRequestError
 from .service.validator.validator import Validator
 
@@ -87,5 +87,19 @@ class BusinessRequestView(viewsets.ModelViewSet):
             current_business_request.services_package_price.set(services_package_list)
             current_business_request.save()
         result = self.serializer_class(current_business_request).data
+        return Response(result, status=status.HTTP_200_OK)
+
+
+# ===========
+# Бизнес запрос
+# ===========
+class ServicesPackageView(viewsets.ModelViewSet):
+    serializer_class = ServicesPackageSerializer
+    queryset = ServicesPackage.objects.all()
+    permission_classes = [permissions.AllowAny]
+
+    @action(detail=False, methods=['post'])
+    def get_services_package(self, request):
+        result = self.serializer_class(self.queryset, many=True).data
         return Response(result, status=status.HTTP_200_OK)
 
