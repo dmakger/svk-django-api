@@ -1,6 +1,15 @@
 from rest_framework import serializers
 
-from .models import Menu, Page
+from .models import Menu, Page, File
+
+
+# ===========
+# Файлы
+# ===========
+class FileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = File
+        fields = ["title", "file"]
 
 
 # ===========
@@ -12,9 +21,23 @@ class PageTitleSerializer(serializers.ModelSerializer):
         fields = ["path", "title"]
 
 
+class PageSerializer(serializers.ModelSerializer):
+    files = FileSerializer(many=True)
+
+    class Meta:
+        model = Page
+        fields = ["path", "title", "description", "content", "files"]
+
+
 # ===========
 # Меню
 # ===========
+class MenuTitleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Menu
+        fields = ["path", "title"]
+
+
 class MenuSerializer(serializers.ModelSerializer):
     pages = serializers.SerializerMethodField()
 

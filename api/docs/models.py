@@ -18,8 +18,7 @@ class Menu(models.Model):
 
 
 class File(models.Model):
-    link = models.CharField('Ссылка на файл', max_length=64, unique=True)
-    file = models.FilePathField('Файл', path='docs/')
+    file = models.FileField('Файл', upload_to='docs/file/')
     title = models.CharField('Название', max_length=128, unique=True)
 
     class Meta:
