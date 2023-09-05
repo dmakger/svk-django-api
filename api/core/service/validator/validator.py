@@ -1,3 +1,6 @@
+from django.db.models import QuerySet
+
+
 class Validator:
 
     def __init__(self, request=None, queryset=None, error_adapter=None):
@@ -27,7 +30,7 @@ class Validator:
 
     def is_not_found(self, queryset=None):
         queryset = self._get_queryset(queryset)
-        if len(queryset) == 0:
+        if type(queryset) in [list, QuerySet] and len(queryset) == 0:
             self.has_error = True
             self.error = self.error_adapter.is_not_found()
 
