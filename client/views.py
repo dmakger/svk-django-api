@@ -20,6 +20,8 @@ class ClientView(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def create_client(self, request):
+        print(request)
+        print(request.data)
         validator = Validator(request=request, error_adapter=self.error_adapter)
         validator.is_not_content(need_data=['username', 'number_phone', 'email', 'communication'])
         if validator.has_error:
