@@ -8,6 +8,8 @@ from django.db import models
 class Menu(models.Model):
     path = models.CharField('Путь', max_length=64, unique=True)
     title = models.CharField('Название', max_length=128, unique=True)
+    isVisible = models.BooleanField('Отображать меню', default=False)
+    number = models.IntegerField('Порядковый номер')
 
     class Meta:
         verbose_name = "Меню"
@@ -36,6 +38,7 @@ class Page(models.Model):
     description = RichTextUploadingField(verbose_name='Описание', blank=True, default='')
     content = RichTextUploadingField(verbose_name='Содержимое', blank=True, default='')
     files = models.ManyToManyField(File, verbose_name="Файлы", related_name="files", default='', blank=True)
+    isVisible = models.BooleanField('Отображать страницу', default=False)
 
     class Meta:
         verbose_name = "Страница"

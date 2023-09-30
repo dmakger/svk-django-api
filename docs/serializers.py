@@ -35,7 +35,7 @@ class PageSerializer(serializers.ModelSerializer):
 class MenuTitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu
-        fields = ["path", "title"]
+        fields = ['id', "path", "title"]
 
 
 class MenuSerializer(serializers.ModelSerializer):
@@ -43,9 +43,9 @@ class MenuSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Menu
-        fields = "__all__"
+        fields = ['id', 'title', 'path', 'pages']
 
     @staticmethod
     def get_pages(instance):
-        page_list = Page.objects.filter(menu=instance)
+        page_list = Page.objects.filter(menu=instance, isVisible=True)
         return PageTitleSerializer(page_list, many=True).data

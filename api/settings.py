@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-mdf@!gzf%az3!283rl(_6s1=2mo6q)^mdg4cp09a3c5up&a=57
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.0.105", "localhost", "127.0.0.1", "api.sdelanovkorolyove.ru"]
+ALLOWED_HOSTS = ["192.168.0.105", "localhost", "127.0.0.1", "api.sdelanovkorolyove.ru", "sdelanovkorolyove.ru"]
 
 # Application definition
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'core',
     'client',
     'docs',
+    'bugs',
 
     'rest_framework',
     'corsheaders',
@@ -61,6 +62,7 @@ CORS_ORIGIN_WHITELIST = [
     "http://localhost",
     "http://127.0.0.1",
     "http://api.sdelanovkorolyove.ru",
+    "https://api.sdelanovkorolyove.ru",
     "http://sdelanovkorolyove.ru",
     "https://sdelanovkorolyove.ru",
 ]
@@ -70,6 +72,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://api.sdelanovkorolyove.ru",
+    "https://api.sdelanovkorolyove.ru",
     "http://sdelanovkorolyove.ru",
     "https://sdelanovkorolyove.ru",
 ]

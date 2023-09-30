@@ -16,9 +16,14 @@ class MenuView(viewsets.ModelViewSet):
     queryset = Menu.objects.all()
     permission_classes = [permissions.AllowAny]
 
+    def get_queryset(self):
+        # Фильтруем только видимые меню и сортируем их по полю number
+        queryset = Menu.objects.filter(isVisible=True).order_by('number')
+        return queryset
+
     @action(detail=False, methods=['get'])
     def get_toc(self, request):
-        result = self.serializer_class(self.queryset, many=True).data
+        result = self.serializer_class(self.get_queryset(), many=True).data
         return Response(result, status=status.HTTP_200_OK)
 
 

@@ -34,19 +34,22 @@ class ClientView(viewsets.ModelViewSet):
         elif len(clients_number_phone) > 0:
             current_client = clients_number_phone[0]
         else:
-            social_list = SocialNetwork.objects.filter(link=request.data.get('communication'))
-            if len(social_list) > 0:
-                social = social_list
-            else:
-                social = SocialNetwork.objects.create(link=request.data.get('communication'))
             current_client = Client.objects.create(
                 username=request.data['username'],
                 number_phone=request.data['number_phone'],
                 email=request.data['email'],
             )
-            current_client.communication.set(social),
             current_client.save()
+        # SOCIAL NETWORK
+        social_list = SocialNetwork.objects.filter(link=request.data.get('communication'))
+        if len(social_list) > 0:
+            social = social_list
+        else:
+            social = SocialNetwork.objects.create(link=request.data.get('communication'))
+        current_client.communication.add(social)
+
         result = self.serializer_class(current_client).data
+        print(result)
         return Response(result, status=status.HTTP_200_OK)
 
 
