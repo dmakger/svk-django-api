@@ -22,7 +22,7 @@ class BrandSupportView(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False)
     def get_brands(self, request):
-        qs = Order.by(self.queryset, request)
+        qs = Order.by(self.queryset, request).order_by('number')
         result = Pagination(request=request, queryset=qs).get()
         serializer = self.serializer_class(result.get('results'), many=True)
         result['results'] = serializer.data

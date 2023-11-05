@@ -2,6 +2,8 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from _service.mail.handler import MailHandler
+from _service.mail.mail import Mail
 from bugs.models import Bug
 from bugs.serializers import BugSerializer
 from bugs.service.error.error_view import BugRequestError

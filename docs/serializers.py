@@ -47,5 +47,5 @@ class MenuSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_pages(instance):
-        page_list = Page.objects.filter(menu=instance, isVisible=True)
+        page_list = Page.objects.filter(menu=instance, isVisible=True).order_by('number', 'title')
         return PageTitleSerializer(page_list, many=True).data
