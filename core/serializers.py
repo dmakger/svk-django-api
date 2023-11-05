@@ -63,4 +63,4 @@ class ArticleDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ("path", "title", "writer", "brand", "description", "preview_image", "date_at", "content", "tags")
+        fields = ("path", "title", "writer", "video", "brand", "description", "preview_image", "date_at", "content", "tags")

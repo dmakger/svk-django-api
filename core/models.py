@@ -12,8 +12,8 @@ class BrandSupport(models.Model):
     logo_image = models.ImageField("Логотип", upload_to='brand_support/logo/')
 
     class Meta:
-        verbose_name = "Поддержка бренда"
-        verbose_name_plural = "Поддержка бренда"
+        verbose_name = "Бренд в России"
+        verbose_name_plural = "Бренды в России"
 
     def __str__(self):
         return self.title
@@ -72,6 +72,7 @@ class Article(models.Model):
     title = models.CharField('Название', max_length=128, unique=True)
     description = RichTextUploadingField(verbose_name='Описание')
     preview_image = models.ImageField("Обложка", upload_to='article/preview/', blank=True, null=True)
+    video = models.CharField('Ссылка на видео', max_length=256, blank=True, null=True, default=None)
     time_at = models.TimeField('Время создания', default=datetime.datetime.now())
     date_at = models.DateField('Дата создания', default=datetime.date.today)
     content = RichTextUploadingField(verbose_name='Контент')
