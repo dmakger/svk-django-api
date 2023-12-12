@@ -10,6 +10,7 @@ class BrandSupport(models.Model):
     description = RichTextUploadingField(verbose_name='Описание')
     link = models.CharField('Ссылка на страницу бренда', max_length=128)
     logo_image = models.ImageField("Логотип", upload_to='brand_support/logo/')
+    number = models.IntegerField('Порядковый номер', default=999)
 
     class Meta:
         verbose_name = "Бренд в России"

@@ -3,6 +3,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from _service.mail.handler import MailHandler
 from .models import Client, SocialNetwork, BusinessRequest, ServicesPackagePrice, ServicesPackage
 from .serializers import ClientSerializer, BusinessRequestSerializer, ServicesPackageSerializer
 from .service.error.error_view import ClientError, BusinessRequestError
@@ -20,8 +21,6 @@ class ClientView(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def create_client(self, request):
-        print(request)
-        print(request.data)
         validator = Validator(request=request, error_adapter=self.error_adapter)
         validator.is_not_content(need_data=['username', 'number_phone', 'email', 'communication'])
         if validator.has_error:
@@ -42,14 +41,13 @@ class ClientView(viewsets.ModelViewSet):
             current_client.save()
         # SOCIAL NETWORK
         social_list = SocialNetwork.objects.filter(link=request.data.get('communication'))
-        if len(social_list) > 0:
-            social = social_list
+        if social_list.exists():
+            social = social_list.first()
         else:
             social = SocialNetwork.objects.create(link=request.data.get('communication'))
         current_client.communication.add(social)
 
         result = self.serializer_class(current_client).data
-        print(result)
         return Response(result, status=status.HTTP_200_OK)
 
 
@@ -92,6 +90,9 @@ class BusinessRequestView(viewsets.ModelViewSet):
             current_business_request.services_package_price.set(services_package_list)
             current_business_request.save()
         result = self.serializer_class(current_business_request).data
+        mail = MailHandler()
+        mail.send_auto_write_to_application(recipients=[clients_id_list[0].email])
+        mail.send_new_application(content=result, new_subject=f": {clients_id_list[0].email}")
         return Response(result, status=status.HTTP_200_OK)
 
 

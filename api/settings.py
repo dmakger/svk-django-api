@@ -23,6 +23,10 @@ SECRET_KEY = 'django-insecure-mdf@!gzf%az3!283rl(_6s1=2mo6q)^mdg4cp09a3c5up&a=57
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+CURRENT_HOST = 'https://api.sdelanovkorolyove.ru'
+# CURRENT_HOST = 'http://127.0.0.1:8000'
+# if not DEBUG:
+    # CURRENT_HOST = 'https://api.sdelanovkorolyove.ru'
 
 ALLOWED_HOSTS = ["192.168.0.105", "localhost", "127.0.0.1", "api.sdelanovkorolyove.ru", "sdelanovkorolyove.ru"]
 
@@ -186,3 +190,12 @@ CKEDITOR_CONFIGS = {
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.beget.com'
+EMAIL_PORT = 2525
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'no-reply@sdelanovkorolyove.ru'
+EMAIL_HOST_PASSWORD = 'vRaTMaLgMail1!'
+DEFAULT_FROM_EMAIL = 'no-reply@sdelanovkorolyove.ru'

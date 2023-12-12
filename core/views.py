@@ -22,7 +22,7 @@ class BrandSupportView(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False)
     def get_brands(self, request):
-        qs = Order.by(self.queryset, request)
+        qs = Order.by(self.queryset, request).order_by('number')
         result = Pagination(request=request, queryset=qs).get()
         serializer = self.serializer_class(result.get('results'), many=True)
         result['results'] = serializer.data
@@ -56,6 +56,10 @@ class BrandPartnerDetailView(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True)
     def get_detail_brand_partner(self, request, path):
         qs = self.queryset.filter(path=path)
+        # print(qs)
+        # print(Splitting(
+        #     self, request=request, qs=qs, serializer_body={'instance': qs[0]}
+        # ).complete(check_order=False, check_paginate=False))
         return Splitting(
             self, request=request, qs=qs, serializer_body={'instance': qs[0]}
         ).complete(check_order=False, check_paginate=False)
